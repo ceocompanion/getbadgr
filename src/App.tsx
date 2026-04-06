@@ -1,12 +1,42 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Index from "./pages/Index.tsx";
-import NotFound from "./pages/NotFound.tsx";
+import { useAuth } from "@/hooks/useAuth";
+import AppHeader from "@/components/AppHeader";
+import BottomNav from "@/components/BottomNav";
+import AuthPage from "./pages/AuthPage";
+import Index from "./pages/Index";
+import ScanPage from "./pages/ScanPage";
+import ReviewPage from "./pages/ReviewPage";
+import ContactsPage from "./pages/ContactsPage";
+import SettingsPage from "./pages/SettingsPage";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!user) return <Navigate to="/auth" replace />;
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col max-w-lg mx-auto">
+      <AppHeader />
+      <main className="flex-1 flex flex-col">{children}</main>
+      <BottomNav />
+    </div>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -15,8 +45,12 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/" element={<ProtectedLayout><Index /></ProtectedLayout>} />
+          <Route path="/scan" element={<ProtectedLayout><ScanPage /></ProtectedLayout>} />
+          <Route path="/review" element={<ProtectedLayout><ReviewPage /></ProtectedLayout>} />
+          <Route path="/contacts" element={<ProtectedLayout><ContactsPage /></ProtectedLayout>} />
+          <Route path="/settings" element={<ProtectedLayout><SettingsPage /></ProtectedLayout>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
