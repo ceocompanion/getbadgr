@@ -14,7 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      contacts: {
+        Row: {
+          badge_photo_url: string | null
+          company: string | null
+          company_website: string | null
+          created_at: string
+          email: string | null
+          event_date: string | null
+          event_name: string | null
+          first_name: string | null
+          id: string
+          job_title: string | null
+          last_name: string | null
+          linkedin_url: string | null
+          notes: string | null
+          user_id: string
+          voice_note_url: string | null
+          voice_transcript: string | null
+        }
+        Insert: {
+          badge_photo_url?: string | null
+          company?: string | null
+          company_website?: string | null
+          created_at?: string
+          email?: string | null
+          event_date?: string | null
+          event_name?: string | null
+          first_name?: string | null
+          id?: string
+          job_title?: string | null
+          last_name?: string | null
+          linkedin_url?: string | null
+          notes?: string | null
+          user_id: string
+          voice_note_url?: string | null
+          voice_transcript?: string | null
+        }
+        Update: {
+          badge_photo_url?: string | null
+          company?: string | null
+          company_website?: string | null
+          created_at?: string
+          email?: string | null
+          event_date?: string | null
+          event_name?: string | null
+          first_name?: string | null
+          id?: string
+          job_title?: string | null
+          last_name?: string | null
+          linkedin_url?: string | null
+          notes?: string | null
+          user_id?: string
+          voice_note_url?: string | null
+          voice_transcript?: string | null
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          created_at: string
+          date: string | null
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string | null
+          id?: string
+          name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string | null
+          id?: string
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
