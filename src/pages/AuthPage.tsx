@@ -10,6 +10,16 @@ import { toast } from "sonner";
 const AuthPage = () => {
   const { user, loading: authLoading } = useAuth();
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (user) return <Navigate to="/" replace />;
+
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
