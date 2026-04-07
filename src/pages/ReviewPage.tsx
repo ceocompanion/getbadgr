@@ -86,7 +86,7 @@ const ReviewPage = () => {
       // Upload badge photo
       if (badgeImage) {
         const base64 = badgeImage.split(",")[1];
-        const fileName = `${user.id}/${Date.now()}_badge.jpg`;
+        const fileName = `${user.id}/${Date.now()}_${crypto.randomUUID().slice(0, 8)}_badge.jpg`;
         const { error: uploadError } = await supabase.storage
           .from("badge-photos")
           .upload(fileName, Uint8Array.from(atob(base64), (c) => c.charCodeAt(0)), {
