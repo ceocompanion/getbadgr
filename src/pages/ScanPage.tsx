@@ -96,11 +96,13 @@ const ScanPage = () => {
               </div>
             )}
           </div>
-          <div className="absolute bottom-8 left-0 right-0 flex justify-center">
+          <div className="absolute bottom-8 left-0 right-0 flex justify-center z-20">
             <button
               onClick={capturePhoto}
+              onTouchEnd={(e) => { e.preventDefault(); capturePhoto(); }}
+              onContextMenu={(e) => e.preventDefault()}
               disabled={!cameraActive}
-              className="h-20 w-20 rounded-full border-4 border-primary-foreground bg-primary-foreground/20 flex items-center justify-center active:scale-95 transition-transform disabled:opacity-50"
+              className="h-20 w-20 rounded-full border-4 border-primary-foreground bg-primary-foreground/20 flex items-center justify-center active:scale-95 transition-transform disabled:opacity-50 touch-none select-none"
             >
               <Camera className="h-8 w-8 text-primary-foreground" />
             </button>
