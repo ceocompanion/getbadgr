@@ -12,7 +12,7 @@ const BottomNav = () => {
   const location = useLocation();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-border z-50 pb-safe">
+    <nav className="w-full bg-card border-t border-border z-50 pb-safe flex-shrink-0">
       <div className="flex items-center justify-around h-16 max-w-lg mx-auto">
         {navItems.map(({ to, icon: Icon, label }) => {
           const active = location.pathname === to;
