@@ -100,7 +100,7 @@ const ReviewPage = () => {
 
       // Upload voice note & transcribe
       if (audioBlob) {
-        const fileName = `${user.id}/${Date.now()}_voice.webm`;
+        const fileName = `${user.id}/${Date.now()}_${crypto.randomUUID().slice(0, 8)}_voice.webm`;
         const { error: uploadError } = await supabase.storage
           .from("voice-notes")
           .upload(fileName, audioBlob, { contentType: "audio/webm" });
