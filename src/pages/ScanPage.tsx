@@ -1,6 +1,6 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Camera, X, RotateCcw, Loader2 } from "lucide-react";
+import { Camera, X, RotateCcw, Loader2, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -10,25 +10,12 @@ const ScanPage = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
-
-  const startCamera = useCallback(async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 960 } },
-      });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play();
-        setCameraActive(true);
-      }
-    } catch {
-      toast.error("Could not access camera. Please allow camera permissions.");
-    }
-  }, []);
+  const [cameraStarting, setCameraStarting] = useState(false);
+  const [useFallback, setUseFallback] = useState(false);
 
   const stopCamera = useCallback(() => {
     streamRef.current?.getTracks().forEach((t) => t.stop());
@@ -36,10 +23,24 @@ const ScanPage = () => {
     setCameraActive(false);
   }, []);
 
-  useEffect(() => {
-    startCamera();
-    return () => stopCamera();
-  }, [startCamera, stopCamera]);
+  const startCamera = useCallback(async () => {
+    setCameraStarting(true);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 960 } },
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        setCameraActive(true);
+      }
+    } catch {
+      toast.error("Camera not available. Use the file picker instead.");
+      setUseFallback(true);
+    } finally {
+      setCameraStarting(false);
+    }
+  }, []);
 
   const capturePhoto = () => {
     if (!videoRef.current || !canvasRef.current) return;
@@ -53,22 +54,34 @@ const ScanPage = () => {
     stopCamera();
   };
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCapturedImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const retake = () => {
     setCapturedImage(null);
-    startCamera();
+    if (useFallback) {
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    } else {
+      startCamera();
+    }
   };
 
   const processImage = async () => {
     if (!capturedImage) return;
     setProcessing(true);
-
     try {
       const base64 = capturedImage.split(",")[1];
       const { data, error } = await supabase.functions.invoke("scan-badge", {
         body: { image: base64 },
       });
       if (error) throw error;
-
       navigate("/review", { state: { extractedData: data, badgeImage: capturedImage } });
     } catch (err: any) {
       toast.error(err.message || "Failed to process badge");
@@ -85,28 +98,71 @@ const ScanPage = () => {
       </div>
 
       <canvas ref={canvasRef} className="hidden" />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="hidden"
+        onChange={handleFileSelect}
+      />
 
       {!capturedImage ? (
         <>
           <div className="flex-1 flex items-center justify-center overflow-hidden">
-            <video ref={videoRef} className="w-full h-full object-cover" playsInline muted />
-            {!cameraActive && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-primary-foreground" />
+            {cameraActive ? (
+              <video ref={videoRef} className="w-full h-full object-cover" autoPlay playsInline muted />
+            ) : (
+              <div className="flex flex-col items-center gap-6 p-8 text-center">
+                {cameraStarting ? (
+                  <Loader2 className="h-12 w-12 animate-spin text-primary-foreground" />
+                ) : (
+                  <>
+                    <Video className="h-16 w-16 text-primary-foreground/60" />
+                    <Button
+                      variant="scan"
+                      size="xl"
+                      onClick={startCamera}
+                      className="rounded-2xl"
+                    >
+                      <Camera className="h-6 w-6 mr-2" />
+                      Tap to Start Camera
+                    </Button>
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="text-primary-foreground/70 underline text-sm mt-2"
+                    >
+                      Or pick a photo from gallery
+                    </button>
+                  </>
+                )}
               </div>
             )}
+            {/* Hidden video for when not yet active */}
+            {!cameraActive && <video ref={videoRef} className="hidden" autoPlay playsInline muted />}
           </div>
-          <div className="absolute bottom-8 left-0 right-0 flex justify-center z-[60] pointer-events-none">
-            <button
-              onClick={capturePhoto}
-              onContextMenu={(e) => e.preventDefault()}
-              disabled={!cameraActive}
-              className="h-20 w-20 rounded-full border-4 border-primary-foreground bg-primary-foreground/20 flex items-center justify-center active:scale-95 transition-transform disabled:opacity-50 select-none pointer-events-auto"
-              style={{ WebkitTouchCallout: 'none', touchAction: 'manipulation' }}
-            >
-              <Camera className="h-8 w-8 text-primary-foreground pointer-events-none" />
-            </button>
-          </div>
+
+          {cameraActive && (
+            <div className="absolute bottom-8 left-0 right-0 flex justify-center z-[60] pointer-events-none">
+              <button
+                onClick={capturePhoto}
+                onContextMenu={(e) => e.preventDefault()}
+                className="h-20 w-20 rounded-full border-4 border-primary-foreground bg-primary-foreground/20 flex items-center justify-center active:scale-95 transition-transform select-none pointer-events-auto"
+                style={{ WebkitTouchCallout: 'none', touchAction: 'manipulation' }}
+              >
+                <Camera className="h-8 w-8 text-primary-foreground pointer-events-none" />
+              </button>
+            </div>
+          )}
+
+          {useFallback && !cameraActive && (
+            <div className="absolute bottom-8 left-0 right-0 flex justify-center z-[60]">
+              <Button variant="scan" size="xl" onClick={() => fileInputRef.current?.click()}>
+                <Camera className="h-6 w-6 mr-2" />
+                Take Photo
+              </Button>
+            </div>
+          )}
         </>
       ) : (
         <>
