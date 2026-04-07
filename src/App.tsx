@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,6 +18,8 @@ const queryClient = new QueryClient();
 
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
+  const location = useLocation();
+  const isScanRoute = location.pathname === "/scan";
 
   if (loading) {
     return (
@@ -31,9 +33,9 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col max-w-lg mx-auto">
-      <AppHeader />
+      {!isScanRoute && <AppHeader />}
       <main className="flex-1 flex flex-col">{children}</main>
-      <BottomNav />
+      {!isScanRoute && <BottomNav />}
     </div>
   );
 };
