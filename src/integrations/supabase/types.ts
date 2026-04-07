@@ -95,12 +95,46 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limits: {
+        Row: {
+          call_count: number
+          call_date: string
+          created_at: string
+          function_name: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          call_count?: number
+          call_date?: string
+          created_at?: string
+          function_name: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          call_count?: number
+          call_date?: string
+          created_at?: string
+          function_name?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_rate_limit: {
+        Args: {
+          p_function_name: string
+          p_max_calls: number
+          p_user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
