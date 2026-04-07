@@ -90,9 +90,9 @@ const ScanPage = () => {
   };
 
   return (
-    <div className="flex flex-col bg-foreground/95" style={{ height: "100dvh" }}>
+    <div className="fixed inset-0 flex flex-col bg-foreground/95 overflow-hidden" style={{ height: "100dvh" }}>
       {/* Top bar */}
-      <div className="h-12 flex-shrink-0 flex items-center px-4">
+      <div className="h-14 flex-shrink-0 flex items-center px-4">
         <button onClick={() => navigate("/")} className="p-2 rounded-full bg-foreground/50 text-primary-foreground">
           <X className="h-5 w-5" />
         </button>
@@ -138,13 +138,13 @@ const ScanPage = () => {
             {!cameraActive && <video ref={videoRef} className="hidden" autoPlay playsInline muted />}
           </div>
 
-          {/* Capture button — fixed height, between viewfinder and bottom */}
+          {/* Capture button — fixed height zone */}
           {cameraActive && (
-            <div className="h-24 flex-shrink-0 flex items-center justify-center">
+            <div className="flex-shrink-0 flex items-center justify-center" style={{ height: 100 }}>
               <button
                 onClick={capturePhoto}
                 onContextMenu={(e) => e.preventDefault()}
-                className="h-18 w-18 rounded-full border-4 border-primary-foreground bg-primary-foreground/20 flex items-center justify-center active:scale-95 transition-transform select-none shadow-lg shadow-foreground/20"
+                className="rounded-full border-4 border-primary-foreground bg-primary-foreground/20 flex items-center justify-center active:scale-95 transition-transform select-none shadow-lg shadow-foreground/20"
                 style={{ WebkitTouchCallout: "none", touchAction: "manipulation", width: 72, height: 72 }}
               >
                 <Camera className="h-8 w-8 text-primary-foreground pointer-events-none" />
@@ -154,7 +154,7 @@ const ScanPage = () => {
 
           {/* Fallback button */}
           {useFallback && !cameraActive && (
-            <div className="h-24 flex-shrink-0 flex items-center justify-center">
+            <div className="flex-shrink-0 flex items-center justify-center" style={{ height: 100 }}>
               <Button variant="scan" size="xl" onClick={() => fileInputRef.current?.click()}>
                 <Camera className="h-6 w-6 mr-2" />
                 Take Photo
@@ -170,7 +170,7 @@ const ScanPage = () => {
           <div className="flex-1 min-h-0 overflow-hidden flex items-center justify-center p-4">
             <img src={capturedImage} alt="Captured badge" className="max-w-full max-h-full rounded-xl object-contain" />
           </div>
-          <div className="flex-shrink-0 p-4 pb-8 flex gap-3">
+          <div className="flex-shrink-0 flex gap-3 px-4" style={{ height: 100, alignItems: "center" }}>
             <Button variant="outline" className="flex-1 h-14 bg-card" onClick={retake} disabled={processing}>
               <RotateCcw className="h-4 w-4 mr-2" />
               Retake
@@ -186,6 +186,7 @@ const ScanPage = () => {
               )}
             </Button>
           </div>
+          <div className="flex-shrink-0" style={{ height: "env(safe-area-inset-bottom, 0px)" }} />
         </>
       )}
     </div>
