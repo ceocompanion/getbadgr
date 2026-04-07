@@ -45,9 +45,9 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   if (!user) return <Navigate to="/auth" replace />;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col max-w-lg mx-auto">
+    <div className="h-[100dvh] bg-background flex flex-col max-w-lg mx-auto overflow-hidden">
       {!isScanRoute && <AppHeader />}
-      <main className="flex-1 flex flex-col">{children}</main>
+      <main className="flex-1 flex flex-col min-h-0">{children}</main>
       {!isScanRoute && <BottomNav />}
     </div>
   );
