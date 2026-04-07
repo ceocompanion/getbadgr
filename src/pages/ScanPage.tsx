@@ -143,11 +143,14 @@ const ScanPage = () => {
           </div>
 
           {cameraActive && (
-            <div className="absolute bottom-8 left-0 right-0 flex justify-center z-[60] pointer-events-none">
+            <div
+              className="absolute left-0 right-0 flex justify-center z-[60] pointer-events-none px-4"
+              style={{ bottom: "max(2rem, calc(env(safe-area-inset-bottom) + 6rem))" }}
+            >
               <button
                 onClick={capturePhoto}
                 onContextMenu={(e) => e.preventDefault()}
-                className="h-20 w-20 rounded-full border-4 border-primary-foreground bg-primary-foreground/20 flex items-center justify-center active:scale-95 transition-transform select-none pointer-events-auto"
+                className="h-20 w-20 rounded-full border-4 border-primary-foreground bg-primary-foreground/20 flex items-center justify-center active:scale-95 transition-transform select-none pointer-events-auto shadow-lg shadow-foreground/20"
                 style={{ WebkitTouchCallout: 'none', touchAction: 'manipulation' }}
               >
                 <Camera className="h-8 w-8 text-primary-foreground pointer-events-none" />
@@ -156,7 +159,10 @@ const ScanPage = () => {
           )}
 
           {useFallback && !cameraActive && (
-            <div className="absolute bottom-8 left-0 right-0 flex justify-center z-[60]">
+            <div
+              className="absolute left-0 right-0 flex justify-center z-[60] px-4"
+              style={{ bottom: "max(2rem, calc(env(safe-area-inset-bottom) + 6rem))" }}
+            >
               <Button variant="scan" size="xl" onClick={() => fileInputRef.current?.click()}>
                 <Camera className="h-6 w-6 mr-2" />
                 Take Photo
