@@ -49,7 +49,7 @@ const App = () => (
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/" element={<ProtectedLayout><Index /></ProtectedLayout>} />
-          <Route path="/scan" element={<ProtectedLayout><ScanPage /></ProtectedLayout>} />
+          <Route path="/scan" element={<ScanRoute />} />
           <Route path="/review" element={<ProtectedLayout><ReviewPage /></ProtectedLayout>} />
           <Route path="/contacts" element={<ProtectedLayout><ContactsPage /></ProtectedLayout>} />
           <Route path="/settings" element={<ProtectedLayout><SettingsPage /></ProtectedLayout>} />
