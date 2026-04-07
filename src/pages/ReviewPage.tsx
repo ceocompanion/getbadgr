@@ -105,13 +105,14 @@ const ReviewPage = () => {
           .from("voice-notes")
           .upload(fileName, audioBlob, { contentType: "audio/webm" });
         if (!uploadError) {
-          const { data: urlData } = supabase.storage.from("voice-notes").getPublicUrl(fileName);
-          voiceNoteUrl = urlData.publicUrl;
+          // Store the file path, not a public URL (bucket is private)
+          voiceNoteUrl = fileName;
 
-          // Transcribe
+          // Transcribe using a signed URL
           try {
+            const { data: signedUrlData } = await supabase.storage.from("voice-notes").createSignedUrl(fileName, 300);
             const { data: transcriptData } = await supabase.functions.invoke("transcribe", {
-              body: { audioUrl: voiceNoteUrl },
+              body: { audioUrl: signedUrlData?.signedUrl },
             });
             voiceTranscript = transcriptData?.transcript || null;
           } catch {
