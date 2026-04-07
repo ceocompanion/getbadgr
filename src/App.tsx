@@ -16,6 +16,19 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+const ScanRoute = () => {
+  const { user, loading } = useAuth();
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+  if (!user) return <Navigate to="/auth" replace />;
+  return <ScanPage />;
+};
+
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
@@ -49,7 +62,7 @@ const App = () => (
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/" element={<ProtectedLayout><Index /></ProtectedLayout>} />
-          <Route path="/scan" element={<ProtectedLayout><ScanPage /></ProtectedLayout>} />
+          <Route path="/scan" element={<ScanRoute />} />
           <Route path="/review" element={<ProtectedLayout><ReviewPage /></ProtectedLayout>} />
           <Route path="/contacts" element={<ProtectedLayout><ContactsPage /></ProtectedLayout>} />
           <Route path="/settings" element={<ProtectedLayout><SettingsPage /></ProtectedLayout>} />
