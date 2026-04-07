@@ -93,8 +93,8 @@ const ReviewPage = () => {
             contentType: "image/jpeg",
           });
         if (!uploadError) {
-          const { data: urlData } = supabase.storage.from("badge-photos").getPublicUrl(fileName);
-          badgePhotoUrl = urlData.publicUrl;
+          // Store the file path, not a public URL (bucket is private)
+          badgePhotoUrl = fileName;
         }
       }
 
