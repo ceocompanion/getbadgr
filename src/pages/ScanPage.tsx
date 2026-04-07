@@ -96,12 +96,12 @@ const ScanPage = () => {
               </div>
             )}
           </div>
-          <div className="absolute bottom-8 left-0 right-0 flex justify-center z-20">
+          <div className="absolute bottom-8 left-0 right-0 flex justify-center z-[60] pointer-events-none">
             <button
               onClick={capturePhoto}
               onContextMenu={(e) => e.preventDefault()}
               disabled={!cameraActive}
-              className="h-20 w-20 rounded-full border-4 border-primary-foreground bg-primary-foreground/20 flex items-center justify-center active:scale-95 transition-transform disabled:opacity-50 select-none"
+              className="h-20 w-20 rounded-full border-4 border-primary-foreground bg-primary-foreground/20 flex items-center justify-center active:scale-95 transition-transform disabled:opacity-50 select-none pointer-events-auto"
               style={{ WebkitTouchCallout: 'none', touchAction: 'manipulation' }}
             >
               <Camera className="h-8 w-8 text-primary-foreground pointer-events-none" />
