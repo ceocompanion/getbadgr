@@ -111,10 +111,16 @@ const ScanPage = () => {
       {!capturedImage ? (
         <>
           {/* Viewfinder area — fills remaining space, never scrolls */}
-          <div className="flex-1 min-h-0 overflow-hidden flex items-center justify-center">
-            {cameraActive ? (
-              <video ref={videoRef} className="w-full h-full object-cover" autoPlay playsInline muted />
-            ) : (
+          <div className="flex-1 min-h-0 overflow-hidden flex items-center justify-center relative">
+            {/* Single video element, always mounted so srcObject persists across renders */}
+            <video
+              ref={videoRef}
+              className={cameraActive ? "w-full h-full object-cover" : "hidden"}
+              autoPlay
+              playsInline
+              muted
+            />
+            {!cameraActive && (
               <div className="flex flex-col items-center gap-6 p-8 text-center">
                 {cameraStarting ? (
                   <Loader2 className="h-12 w-12 animate-spin text-primary-foreground" />
@@ -135,7 +141,6 @@ const ScanPage = () => {
                 )}
               </div>
             )}
-            {!cameraActive && <video ref={videoRef} className="hidden" autoPlay playsInline muted />}
           </div>
 
           {/* Capture button — fixed height zone */}
