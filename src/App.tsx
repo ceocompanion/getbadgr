@@ -11,6 +11,7 @@ import Index from "./pages/Index";
 import ScanPage from "./pages/ScanPage";
 import ReviewPage from "./pages/ReviewPage";
 import ContactsPage from "./pages/ContactsPage";
+import EditContactPage from "./pages/EditContactPage";
 import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 
@@ -65,6 +66,7 @@ const App = () => (
           <Route path="/scan" element={<ScanRoute />} />
           <Route path="/review" element={<ProtectedLayout><ReviewPage /></ProtectedLayout>} />
           <Route path="/contacts" element={<ProtectedLayout><ContactsPage /></ProtectedLayout>} />
+          <Route path="/contacts/:id/edit" element={<ProtectedLayout><EditContactPage /></ProtectedLayout>} />
           <Route path="/settings" element={<ProtectedLayout><SettingsPage /></ProtectedLayout>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
