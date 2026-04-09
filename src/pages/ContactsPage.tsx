@@ -10,6 +10,7 @@ import ContactCard from "@/components/ContactCard";
 
 const ContactsPage = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [eventFilter, setEventFilter] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
